@@ -17,23 +17,24 @@ def lambda_handler(event, context):
     )
 
     current_count = int(db_response["Item"]["count"]["N"])
+    current_count+=1
     new_item = {
         'id': {
             "S":"portfolio-count"
         },
         'count': {
-            "N": str(current_count+1)
+            "N": str(current_count)
         }
     }
 
-    client.put_item(
+    put_response = client.put_item(
         TableName=table_name,
         Item=new_item
     )
 
     response = {
         'statusCode': 200,
-        'body': "Success!",
+        'body': json.dumps({'view-count':current_count}),
         'headers': {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
